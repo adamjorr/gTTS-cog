@@ -18,12 +18,12 @@ class Gtts(commands.Cog):
             player._node.host, player._node.rest, bytestr)
         async with player._session.get(req_url, headers = player._headers) as resp:
             data = await resp.json(content_type=None)
-		try:
-	        track = data["tracks"] if type(data) is dict else data
-		except KeyError:
-			print("data:")
-			print(data)
-			raise
+        try:
+            track = data["tracks"] if type(data) is dict else data
+        except KeyError:
+            print("data:")
+            print(data)
+            raise
         track = Track(track[0])
         player.add(ctx.author, track)
         if not player.current:
