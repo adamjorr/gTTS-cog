@@ -20,8 +20,8 @@ class Gtts(commands.Cog):
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
         with tempfile.NamedTemporaryFile(dir=str(audiopath / 'localtracks') + '/', suffix = '.mp3') as tmpfile:
-            log.debug('Created file ' + tmpfile.name)
+            print('Created file ' + tmpfile.name)
             playfp = pathlib.Path(tmpfile.name).relative_to(audiopath)
-            log.debug("Play Filepath: " + str(playfp))
+            print("Play Filepath: " + str(playfp))
             tts.write_to_fp(tmpfile)
             await ctx.invoke(Audio.play, query = 'localtracks:{}'.format(str(playfp)))
