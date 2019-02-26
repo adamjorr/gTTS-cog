@@ -3,6 +3,7 @@ import lavalink
 from gtts import gTTS
 from io import BytesIO
 import codecs
+from urllib.parse import quote
 
 class Gtts(commands.Cog):
     """Speak using gTTS."""
@@ -13,10 +14,10 @@ class Gtts(commands.Cog):
         bytefp = BytesIO()
         tts = gTTS(query, lang)
         tts.write_to_fp(bytefp)
-        bytestr = codecs.encode(bytefp.getvalue(), encoding = 'base64')
+        bytestr = codecs.encode(bytefp.getvalue(), encoding = 'base64').decode()
         player = lavalink.get_player(ctx.guild.id)
         req_url = "http://{}:{}/decodetrack?track={}".format(
-            player._node.host, player._node.rest, bytestr)
+            player._node.host, player._node.rest, quote(bytestr))
         async with player._session.get(req_url, headers = player._headers) as resp:
             data = await resp.json(content_type=None)
         try:
