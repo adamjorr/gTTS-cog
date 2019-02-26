@@ -15,6 +15,8 @@ class Gtts(commands.Cog):
         tts = gTTS(query, lang)
         tts.write_to_fp(bytefp)
         bytestr = codecs.encode(bytefp.getvalue(), encoding = 'base64').decode()
+        bytestr = bytestr.replace('+','-')
+        bytestr = bytestr.replace('\\','_')
         player = lavalink.get_player(ctx.guild.id)
         req_url = "http://{}:{}/decodetrack?track={}".format(
             player._node.host, player._node.rest, quote(bytestr))
