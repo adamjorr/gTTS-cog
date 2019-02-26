@@ -4,6 +4,7 @@ from urllib.parse import quote
 import os
 from redbot.core.data_manager import cog_data_path
 import tempfile
+import pathlib
 
 class Gtts(commands.Cog):
     """Speak using gTTS."""
