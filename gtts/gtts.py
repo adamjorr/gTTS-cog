@@ -24,4 +24,4 @@ class Gtts(commands.Cog):
             playfp = pathlib.Path(tmpfile.name).relative_to(audiopath)
             print("Play Filepath: " + str(playfp))
             tts.write_to_fp(tmpfile)
-            await ctx.invoke(Audio.play, query = 'localtracks:{}'.format(str(playfp)))
+            await ctx.invoke(Audio.play, query = 'localtrack:{}'.format(str(playfp)))
