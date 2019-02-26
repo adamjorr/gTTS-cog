@@ -24,4 +24,7 @@ class Gtts(commands.Cog):
             playfp = pathlib.Path(tmpfile.name).relative_to(audiopath)
             print("Play Filepath: " + str(playfp))
             tts.write_to_fp(tmpfile)
-            await ctx.invoke(Audio.play, query = 'localtrack:{}'.format(str(playfp)))
+            query = 'localtrack:{}'.format(str(playfp))
+            print("Query:", query)
+            await ctx.invoke(Audio.play, query = query)
+            print("Destroying file")
