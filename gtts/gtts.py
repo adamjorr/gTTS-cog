@@ -5,6 +5,7 @@ import os
 from redbot.core.data_manager import cog_data_path
 import tempfile
 import pathlib
+import asyncio
 
 class Gtts(commands.Cog):
     """Speak using gTTS."""
@@ -17,6 +18,10 @@ class Gtts(commands.Cog):
         with tempfile.TemporaryDirectory(prefix=str(audiopath / 'localtracks') + '/') as tmpdir:
             pipefp = pathlib.Path(tmpdir) / 'gtts.mp3'
             os.mkfifo(pipefp)
-            tts.save(pipefp)
             playfp = pipefp.relative_to(audiopath)
-            await ctx.invoke(self.play, query = 'localtracks:{}'.format(str(playfp)))
+            ctx.bot.loop.gather(
+                tts.save(pipefp)
+                ctx.invoke(self.play, query = 'localtracks:{}'.format(str(playfp)))
+            )
+            #tts.save(pipefp)
+            #await ctx.invoke(self.play, query = 'localtracks:{}'.format(str(playfp)))
