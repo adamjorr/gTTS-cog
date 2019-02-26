@@ -14,7 +14,7 @@ class Gtts(commands.Cog):
         """Have the bot say something."""
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
-        with tempfile.TemporaryDirectory(prefix=str(audiopath)) as tmpdir:
+        with tempfile.TemporaryDirectory(prefix=str(audiopath / 'localtracks') + '/') as tmpdir:
             pipefp = pathlib.Path(tmpdir) / 'gtts.mp3'
             os.mkfifo(pipefp)
             tts.save(pipefp)
