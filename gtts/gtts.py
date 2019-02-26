@@ -15,13 +15,7 @@ class Gtts(commands.Cog):
         """Have the bot say something."""
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
-        with tempfile.TemporaryDirectory(prefix=str(audiopath / 'localtracks') + '/') as tmpdir:
-            pipefp = pathlib.Path(tmpdir) / 'gtts.mp3'
-            os.mkfifo(pipefp)
-            playfp = pipefp.relative_to(audiopath)
-            ctx.bot.loop.gather(
-                tts.save(pipefp)
-                ctx.invoke(self.play, query = 'localtracks:{}'.format(str(playfp)))
-            )
-            #tts.save(pipefp)
-            #await ctx.invoke(self.play, query = 'localtracks:{}'.format(str(playfp)))
+        with tempfile.NamedTemporaryFile(dir=str(audiopath / localtracks) + '/', suffix = '.mp3') as tmpfile:
+            playfp = pathlib.Path(tmpfile.name).relative_to(audiopath)
+            tts.write_to_fp(tmpfile)
+            await ctx.invoke(self.play, query = 'localtracks:{}'.format(str(playfp)))
