@@ -21,6 +21,8 @@ class Gtts(commands.Cog):
         try:
             track = data["tracks"] if type(data) is dict else data
         except KeyError:
+            print("request:")
+            print(req_url)
             print("data:")
             print(data)
             raise

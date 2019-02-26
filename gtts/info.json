@@ -1,0 +1,13 @@
+{
+  "author": [
+    "Adam J. Orr"
+  ],
+  "bot_version": [
+    3,
+    0,
+    0
+  ],
+  "description": "Say things with gTTS",
+  "install_msg": "Thank you for installing gTTS. Use `[p]say message` to say something.",
+  "short": "Enable gTTS"
+}
