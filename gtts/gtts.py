@@ -17,6 +17,7 @@ class Gtts(commands.Cog):
     @commands.command()
     async def say(self, ctx, *, query, lang = 'en'):
         """Have the bot say something."""
+        print('Query:',query)
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
         with tempfile.NamedTemporaryFile(dir=str(audiopath / 'localtracks') + '/', suffix = '.mp3') as tmpfile:
