@@ -2,6 +2,7 @@ from redbot.core import commands
 import lavalink
 from gtts import gTTS
 from io import BytesIO
+import codecs
 
 class Gtts(commands.Cog):
     """Speak using gTTS."""
@@ -12,7 +13,7 @@ class Gtts(commands.Cog):
         bytefp = BytesIO()
         tts = gTTS(query, lang)
         tts.write_to_fp(bytefp)
-        bytestr = bytefp.getvalue().decode()
+        bytestr = codecs.encode(bytefp.getvalue(), encoding = 'base64')
         player = lavalink.get_player(ctx.guild.id)
         req_url = "http://{}:{}/decodetrack?track={}".format(
             player._node.host, player._node.rest, bytestr)
