@@ -19,7 +19,7 @@ class Gtts(commands.Cog):
         bytestr = bytestr.replace('/','_')
         player = lavalink.get_player(ctx.guild.id)
         req_url = "http://{}:{}/decodetrack?track={}".format(
-            player._node.host, player._node.rest, quote(bytestr))
+            player._node.host, player._node.rest, bytestr)
         async with player._session.get(req_url, headers = player._headers) as resp:
             data = await resp.json(content_type=None)
         try:
