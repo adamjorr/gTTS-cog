@@ -30,10 +30,6 @@ class Gtts(commands.Cog):
             playfp = pathlib.Path(filepath).relative_to(audiopath)
             q = 'localtrack:{}'.format(str(playfp))
             print(f'Playfp is {playfp}')
-            try:
-                await asyncio.wait_for(ctx.invoke(Audio.play, query = q), timeout = 60)
-            except asyncio.TimeoutError:
-                await Audio._embed_msg(ctx, 'Playing file took too long.') #TODO: don't use private methods
-            duration = await Audio._queue_duration(ctx) #TODO: don't use private methods
-            await asyncio.sleep(duration + 1) #TODO: actually use a callback to tell when the track is done
+            await ctx.invoke(Audio.play, query = q)
+            await asyncio.sleep(30) #TODO: actually use a callback to tell when the track is done
         print(f'Removing {filepath}')
