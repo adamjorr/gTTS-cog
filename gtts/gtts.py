@@ -28,15 +28,21 @@ class Gtts(commands.Cog):
         file = tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks') + '/', suffix = '.mp3', delete = False)
         filepath = file.name
         file.close()
+        print(f'Opened and closed path {filepath}')
         async with aiofiles.open(filepath, mode = 'wb') as tmpfile:
+            print(f'Reopened path {filepath}')
             try:
                 await asyncio.wait_for(query_and_write(query, lang, tmpfile), timeout = 60)
+                print(f'File {filepath} should be written to.')
             except asyncio.TimeoutError:
                 await Audio._embed_msg(ctx, 'Request timed out.')
         playfp = pathlib.Path(filepath).relative_to(audiopath)
         q = 'localtrack:{}'.format(str(playfp))
+        print(f'Playfp is {playfp}')
         try:
             await asyncio.wait_for(ctx.invoke(Audio.play, query = q), timeout = 60)
+            print(f'Waited for file {playfp}')
         except asyncio.TimeoutError:
             await Audio._embed_msg(ctx, 'Playing file took too long.')
         os.remove(filepath)
+        print(f'Removing {filepath}')
