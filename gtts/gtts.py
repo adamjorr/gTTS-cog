@@ -30,7 +30,7 @@ class Gtts(commands.Cog):
         file.close()
         async with aiofiles.open(filepath, mode = 'wb') as tmpfile:
             try:
-                await asyncio.wait_for(query_and_write(query, lang, file), timeout = 60)
+                await asyncio.wait_for(query_and_write(query, lang, tmpfile), timeout = 60)
             except asyncio.TimeoutError:
                 await Audio._embed_msg(ctx, 'Request timed out.')
         playfp = pathlib.Path(filepath).relative_to(audiopath)
