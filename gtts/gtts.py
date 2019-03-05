@@ -44,5 +44,7 @@ class Gtts(commands.Cog):
             print(f'Waited for file {playfp}')
         except asyncio.TimeoutError:
             await Audio._embed_msg(ctx, 'Playing file took too long.')
+        await duration = Audio._queue_duration(ctx)
+        await asyncio.sleep(duration + 1) #TODO: actually use a callback to tell when the track is done
         os.remove(filepath)
         print(f'Removing {filepath}')
