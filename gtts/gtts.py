@@ -31,5 +31,4 @@ class Gtts(commands.Cog):
             q = 'localtrack:{}'.format(str(playfp))
             print(f'Playfp is {playfp}')
             await ctx.invoke(Audio.play, query = q)
-            await asyncio.sleep(30) #TODO: actually use a callback to tell when the track is done
         print(f'Removing {filepath}')
