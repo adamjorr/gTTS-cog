@@ -12,10 +12,6 @@ import aiofiles
 
 log = logging.getLogger("red.audio")
 
-async def query_and_write(query, lang, flo):
-    tts = gTTS(query, lang)
-    tts.write_to_fp(flo)
-
 class Gtts(commands.Cog):
     """Speak using gTTS."""
 
@@ -25,26 +21,19 @@ class Gtts(commands.Cog):
         print('Query:',query)
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
-        file = tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks') + '/', suffix = '.mp3', delete = False)
-        filepath = file.name
-        file.close()
-        print(f'Opened and closed path {filepath}')
-        async with aiofiles.open(filepath, mode = 'wb') as tmpfile:
-            print(f'Reopened path {filepath}')
+        with tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks') + '/', suffix = '.mp3') as file
+            filepath = file.name
+            print(f'Opened path {filepath}')
+            tts = gTTS(query, lang)
+            tts.write_to_fp(file)
+            print(f'File {filepath} should be written to.')
+            playfp = pathlib.Path(filepath).relative_to(audiopath)
+            q = 'localtrack:{}'.format(str(playfp))
+            print(f'Playfp is {playfp}')
             try:
-                await asyncio.wait_for(query_and_write(query, lang, tmpfile), timeout = 60)
-                print(f'File {filepath} should be written to.')
+                await asyncio.wait_for(ctx.invoke(Audio.play, query = q), timeout = 60)
             except asyncio.TimeoutError:
-                await Audio._embed_msg(ctx, 'Request timed out.')
-        playfp = pathlib.Path(filepath).relative_to(audiopath)
-        q = 'localtrack:{}'.format(str(playfp))
-        print(f'Playfp is {playfp}')
-        try:
-            await asyncio.wait_for(ctx.invoke(Audio.play, query = q), timeout = 60)
-            print(f'Waited for file {playfp}')
-        except asyncio.TimeoutError:
-            await Audio._embed_msg(ctx, 'Playing file took too long.')
-        duration = await Audio._queue_duration(ctx)
-        await asyncio.sleep(duration + 1) #TODO: actually use a callback to tell when the track is done
-        os.remove(filepath)
+                await Audio._embed_msg(ctx, 'Playing file took too long.') #TODO: don't use private methods
+            duration = await Audio._queue_duration(ctx) #TODO: don't use private methods
+            await asyncio.sleep(duration + 1) #TODO: actually use a callback to tell when the track is done
         print(f'Removing {filepath}')
