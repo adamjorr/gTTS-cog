@@ -21,7 +21,7 @@ class Gtts(commands.Cog):
         print('Query:',query)
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
-        with tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks') + '/', suffix = '.mp3') as file
+        with tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks') + '/', suffix = '.mp3') as file:
             filepath = file.name
             print(f'Opened path {filepath}')
             tts = gTTS(query, lang)
