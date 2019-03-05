@@ -34,9 +34,9 @@ class Gtts(commands.Cog):
             except asyncio.TimeoutError:
                 await Audio._embed_msg(ctx, 'Request timed out.')
         playfp = pathlib.Path(filepath).relative_to(audiopath)
-        query = 'localtrack:{}'.format(str(filepath))
+        q = 'localtrack:{}'.format(str(playfp))
         try:
-            await asyncio.wait_for(ctx.invoke(Audio.play, query = query), timeout = 60)
+            await asyncio.wait_for(ctx.invoke(Audio.play, query = q), timeout = 60)
         except asyncio.TimeoutError:
             await Audio._embed_msg(ctx, 'Playing file took too long.')
         os.remove(filepath)
