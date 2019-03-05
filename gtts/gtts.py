@@ -8,8 +8,13 @@ import pathlib
 import asyncio
 from redbot.cogs.audio import Audio
 import logging
+import aiofiles
 
 log = logging.getLogger("red.audio")
+
+async def query_and_write(query, lang, flo):
+    tts = gTTS(query, lang)
+    tts.write_to_fp(flo)
 
 class Gtts(commands.Cog):
     """Speak using gTTS."""
@@ -20,12 +25,18 @@ class Gtts(commands.Cog):
         print('Query:',query)
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
-        with tempfile.NamedTemporaryFile(dir=str(audiopath / 'localtracks') + '/', suffix = '.mp3') as tmpfile:
-            print('Created file ' + tmpfile.name)
-            playfp = pathlib.Path(tmpfile.name).relative_to(audiopath)
-            print("Play Filepath: " + str(playfp))
-            tts.write_to_fp(tmpfile)
-            query = 'localtrack:{}'.format(str(playfp))
-            print("Query:", query)
-            await ctx.invoke(Audio.play, query = query)
-            print("Destroying file")
+        file = tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks') + '/', suffix = '.mp3', delete = False)
+        filepath = file.name
+        file.close()
+        async with aiofiles.open(filepath, mode = 'wb') as tmpfile:
+            try:
+                await asyncio.wait_for(query_and_write(query, lang, file), timeout = 60)
+            except asyncio.TimeoutError:
+                await Audio._embed_msg(ctx, 'Request timed out.')
+        playfp = pathlib.Path(filepath).relative_to(audiopath)
+        query = 'localtrack:{}'.format(str(filepath))
+        try:
+            await asyncio.wait_for(ctx.invoke(Audio.play, query = query), timeout = 60)
+        except asyncio.TimeoutError:
+            await Audio._embed_msg(ctx, 'Playing file took too long.')
+        os.remove(filepath)
