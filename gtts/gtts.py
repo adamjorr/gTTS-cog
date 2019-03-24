@@ -21,15 +21,19 @@ async def write_gtts(gtts, file):
     return gtts.write_to_fp(file)
 
 async def wait_for_end(player, event, extra):
-    if event is lavalink.LavalinkEvents.TRACK_END:
-        if extra is lavalink.TrackEndReason.FINISHED or \
-        extra is lavalink.TrackEndReason.CLEANUP or \
-        extra is lavalink.TrackEndReason.REPLACED or \
-        extra is lavalink.TrackEndReason.STOPPED:
+    log.debug(f"Handling an event: {event} with extra {extra}")
+    if event == lavalink.LavalinkEvents.TRACK_END:
+        if extra == lavalink.TrackEndReason.FINISHED or \
+        extra == lavalink.TrackEndReason.CLEANUP or \
+        extra == lavalink.TrackEndReason.REPLACED or \
+        extra == lavalink.TrackEndReason.STOPPED:
             #the track needs to be deleted
+            log.debug(f"We need to delete a track")
             queue = [t.uri for t in player.queue]
+            log.debug(f"Current queue is {queue}")
             removed = []
             tmpfiles = player.fetch('gtts-tmp-files',[])
+            log.debug(f"Temp files are {tmpfiles}")
             for tmpfile in tmpfiles:
                 if tmpfile not in queue:
                     rmpath = cog_data_path(raw_name='Audio')/tmpfile
@@ -40,6 +44,7 @@ async def wait_for_end(player, event, extra):
                 tmpfiles.remove(tmpfile)
             if len(tmpfiles) == 0:
                 lavalink.unregister_event_listener(wait_for_end)
+                log.debug("Unregistering myself")
         elif extra is lavalink.TrackEndReason.LOAD_FAILED:
             #the track didn't load. should we try again?
             log.info("a track failed to load.")
