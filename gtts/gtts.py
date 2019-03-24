@@ -24,14 +24,17 @@ async def wait_for_end(player, event, extra):
     if event is lavalink.LavalinkEvents.TRACK_END:
         if extra is lavalink.TrackEndReason.FINISHED or \
         extra is lavalink.TrackEndReason.CLEANUP or \
-        extra is lavalink.TrackEndReason.REPLACED:
+        extra is lavalink.TrackEndReason.REPLACED or \
+        extra is lavalink.TrackEndReason.STOPPED:
             #the track needs to be deleted
             queue = [t.uri for t in player.queue]
             removed = []
             tmpfiles = player.fetch('gtts-tmp-files',[])
             for tmpfile in tmpfiles:
                 if tmpfile not in queue:
-                    os.remove(cog_data_path(raw_name='Audio') / tmpfile)
+                    rmpath = cog_data_path(raw_name='Audio')/tmpfile
+                    os.remove(rmpath)
+                    log.info(f"Deleted {rmpath}")
                     removed.append(tmpfile)
             for tmpfile in removed:
                 tmpfiles.remove(tmpfile)
@@ -71,3 +74,4 @@ class Gtts(commands.Cog):
         gtts_tmp_files = player.fetch('gtts-tmp-files',[])
         player.store('gtts-tmp-files', gtts_tmp_files.append(playfp))
         lavalink.register_event_listener(wait_for_end)
+        log.debug("Attached wait_for_end listener")
