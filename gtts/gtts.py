@@ -12,7 +12,6 @@ import aiofiles
 import lavalink
 
 log = logging.getLogger("red.audio")
-log.setLevel(logging.DEBUG)
 
 async def query_gtts(query, lang):
     return gTTS(query, lang)
@@ -70,7 +69,7 @@ class Gtts(commands.Cog):
         tts = await query_gtts(query, lang)
         await write_gtts(tts,file)
         file.close()
-        log.debug(f'File {filepath} should be written to.')
+        log.info(f'Wrote to {filepath}.')
         playfp = pathlib.Path(filepath).relative_to(audiopath)
         q = 'localtrack:{}'.format(str(playfp))
         log.debug(f'Playfp is {playfp}')
@@ -79,6 +78,6 @@ class Gtts(commands.Cog):
         gtts_tmp_files = player.fetch('gtts-tmp-files',[])
         gtts_tmp_files.append(playfp)
         player.store('gtts-tmp-files', gtts_tmp_files)
-        log.debug("Stored tmp files with player: {gtts_tmp_files}")
+        log.debug(f"Stored tmp files with player: {gtts_tmp_files}")
         lavalink.register_event_listener(wait_for_end)
         log.debug("Attached wait_for_end listener")
