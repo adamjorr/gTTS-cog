@@ -40,6 +40,10 @@ async def wait_for_end(player, event, extra):
             #the track didn't load. should we try again?
             print("a track failed to load.")
 
+async def send_embed(ctx, title):
+    embed = discord.Embed(colour=await ctx.embed_colour(), title = title)
+    await ctx.send(embed = embed)
+
 class Gtts(commands.Cog):
     """Speak using gTTS."""
 
