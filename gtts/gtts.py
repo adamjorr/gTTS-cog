@@ -12,6 +12,7 @@ import aiofiles
 import lavalink
 
 log = logging.getLogger("red.audio")
+log.setLevel(logging.DEBUG)
 
 async def query_gtts(query, lang):
     return gTTS(query, lang)
@@ -38,7 +39,7 @@ async def wait_for_end(player, event, extra):
                 lavalink.unregister_event_listener(wait_for_end)
         elif extra is lavalink.TrackEndReason.LOAD_FAILED:
             #the track didn't load. should we try again?
-            print("a track failed to load.")
+            log.info("a track failed to load.")
 
 async def send_embed(ctx, title):
     embed = discord.Embed(colour=await ctx.embed_colour(), title = title)
@@ -50,19 +51,19 @@ class Gtts(commands.Cog):
     @commands.command()
     async def say(self, ctx, *, query, lang = 'en'):
         """Have the bot say something."""
-        print('Query:',query)
+        log.debug(f'Query: {query}')
         tts = gTTS(query, lang)
         audiopath = cog_data_path(raw_name='Audio')
         file = tempfile.NamedTemporaryFile(dir = str(audiopath / 'localtracks/gtts-tmp') + '/', suffix = '.mp3', delete = False)
         filepath = file.name
-        print(f'Opened path {filepath}')
+        log.debug(f'Opened path {filepath}')
         tts = await query_gtts(query, lang)
         await write_gtts(tts,file)
         file.close()
-        print(f'File {filepath} should be written to.')
+        log.debug(f'File {filepath} should be written to.')
         playfp = pathlib.Path(filepath).relative_to(audiopath)
         q = 'localtrack:{}'.format(str(playfp))
-        print(f'Playfp is {playfp}')
+        log.debug(f'Playfp is {playfp}')
         await ctx.invoke(Audio.play, query = q)
         player = lavalink.get_player(ctx.guild.id)
         gtts_tmp_files = player.fetch('gtts-tmp-files',[])
